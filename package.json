@@ -1,0 +1,12 @@
+{
+  "name": "prun-capture-server",
+  "version": "1.0.0",
+  "description": "Standalone capture server for PrUn WebSocket flight data",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

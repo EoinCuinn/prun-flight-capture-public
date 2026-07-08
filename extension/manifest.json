@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "PrUn Flight Capture",
+  "version": "1.0",
+  "description": "Captures SHIP_FLIGHT_MISSION / SYSTEM_TRAFFIC WebSocket frames from PrUn for ephemeris fitting",
+  "host_permissions": [
+    "https://apex.prosperousuniverse.com/*",
+    "http://localhost:5274/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://apex.prosperousuniverse.com/*"],
+      "js": ["content-main.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://apex.prosperousuniverse.com/*"],
+      "js": ["content-bridge.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

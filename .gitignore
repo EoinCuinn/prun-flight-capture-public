@@ -1,0 +1,15 @@
+node_modules/
+
+# Secrets — never commit API keys. Use environment variables / a local .env.
+.env
+.env.*
+!.env.example
+
+# Captured data — contains live game traffic; keep it local.
+# Keep the folder (via .gitkeep) but ignore everything in it.
+captures/*
+!captures/.gitkeep
+
+# Personal / working files
+*.xlsx
+FlightExportfromgame.txt
