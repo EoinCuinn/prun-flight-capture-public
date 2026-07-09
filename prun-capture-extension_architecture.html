@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PrUn Capture // Capture Architecture</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --dim: #8b949e;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --amber: #d29922;
+    --purple: #bc8cff;
+    --teal: #39d3c3;
+    --red: #f85149;
+    --mono: ui-monospace, "Consolas", monospace;
+    --sans: ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    padding: 32px 40px 56px;
+    min-height: 100vh;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .sub {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--dim);
+    margin-bottom: 32px;
+  }
+
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 800px;
+  }
+
+  .row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .tier-label {
+    width: 100px;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-align: right;
+    line-height: 1.3;
+  }
+
+  .node {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    border-radius: 6px;
+    padding: 10px 14px;
+    min-width: 140px;
+    flex: 1;
+  }
+  .node-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .node-sub {
+    font-size: 10.5px;
+    color: var(--dim);
+    line-height: 1.4;
+  }
+  .node-sub code { font-family: var(--mono); font-size: 9px; }
+
+  .node.blue   { border-color: var(--blue);   }
+  .node.green  { border-color: var(--green);  }
+  .node.amber  { border-color: var(--amber);  }
+  .node.purple { border-color: var(--purple); }
+  .node.teal   { border-color: var(--teal);   }
+
+  .node-label.blue   { color: var(--blue);   }
+  .node-label.green  { color: var(--green);  }
+  .node-label.amber  { color: var(--amber);  }
+  .node-label.purple { color: var(--purple); }
+  .node-label.teal   { color: var(--teal);   }
+
+  .arrow-down {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--dim);
+  }
+  .arrow-down .shaft {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+  }
+  .arrow-down .head { font-size: 10px; line-height: 1; }
+
+  .annot {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--dim);
+    text-align: center;
+    line-height: 1.35;
+    margin: 3px 0;
+  }
+
+  .section-sep {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 16px 0 10px;
+  }
+  .section-sep .line  { flex: 1; height: 1px; background: var(--border); }
+  .section-sep .label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .12em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+  .badge-blue   { background: rgba(88,166,255,.15); color: var(--blue); }
+  .badge-amber  { background: rgba(210,153,34,.15); color: var(--amber); }
+</style>
+</head>
+<body>
+
+<div class="eyebrow">prun-flight-capture</div>
+<h1>Capture Architecture</h1>
+<div class="sub">WebSocket → JSONL captures → shielding matrix sweep</div>
+
+<div class="diagram">
+
+  <!-- BROWSER -->
+  <div class="row">
+    <div class="tier-label">Browser</div>
+    <div class="node blue" style="max-width:300px">
+      <div class="node-label blue">APEX WebSocket</div>
+      <div class="node-sub">apex.prosperousuniverse.com<br>Socket.IO frames — <code>42["event",{…}]</code></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="tier-label"></div>
+    <div style="width:300px;max-width:300px;display:flex;justify-content:center;padding-left:60px">
+      <div class="arrow-down"><div class="shaft" style="height:12px"></div><div class="head">▼</div></div>
+    </div>
+  </div>
+
+  <!-- EXTENSION -->
+  <div class="row">
+    <div class="tier-label">Extension</div>
+    <div class="node" style="max-width:300px">
+      <div class="node-label">content-main.js <span class="badge badge-blue">MAIN world</span></div>
+      <div class="node-sub">WebSocket.prototype Proxy<br>Filters incoming + outgoing frames by message type</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="tier-label"></div>
+    <div style="width:300px;max-width:300px;display:flex;flex-direction:column;align-items:center;padding-left:60px">
+      <div class="annot">window.postMessage → chrome.runtime.sendMessage<br>POST localhost:5274/capture {raw, captureType}</div>
+      <div class="arrow-down"><div class="shaft" style="height:10px"></div><div class="head">▼</div></div>
+    </div>
+  </div>
+
+  <!-- SERVER -->
+  <div class="row">
+    <div class="tier-label">Server</div>
+    <div class="node" style="max-width:300px">
+      <div class="node-label">server.js <span class="badge badge-blue">:5274</span></div>
+      <div class="node-sub">Routes by <code>captureType</code> → target JSONL file</div>
+    </div>
+  </div>
+
+  <!-- FAN-OUT SVG -->
+  <div style="margin-left:100px;margin-top:10px;">
+    <svg width="680" height="72" style="overflow:visible;display:block">
+      <line x1="80"  y1="0"  x2="80"  y2="28" stroke="#30363d" stroke-width="1"/>
+      <line x1="20"  y1="28" x2="640" y2="28" stroke="#30363d" stroke-width="1"/>
+      <line x1="20"  y1="28" x2="20"  y2="54" stroke="#30363d" stroke-width="1"/>
+      <line x1="220" y1="28" x2="220" y2="54" stroke="#30363d" stroke-width="1"/>
+      <line x1="430" y1="28" x2="430" y2="54" stroke="#30363d" stroke-width="1"/>
+      <line x1="640" y1="28" x2="640" y2="54" stroke="#30363d" stroke-width="1"/>
+      <polygon points="20,56  17,52  23,52"  fill="#30363d"/>
+      <polygon points="220,56 217,52 223,52" fill="#30363d"/>
+      <polygon points="430,56 427,52 433,52" fill="#30363d"/>
+      <polygon points="640,56 637,52 643,52" fill="#30363d"/>
+    </svg>
+  </div>
+
+  <!-- JSONL FILES -->
+  <div class="row" style="margin-left:100px;gap:8px;align-items:stretch">
+    <div class="node blue" style="flex:1">
+      <div class="node-label blue" style="font-size:10px">captures.jsonl</div>
+      <div class="node-sub" style="font-size:9.5px">SHIP_FLIGHT_MISSION<br>SYSTEM_TRAFFIC</div>
+    </div>
+    <div class="node amber" style="flex:1">
+      <div class="node-label amber" style="font-size:10px">blueprint_data.jsonl</div>
+      <div class="node-sub" style="font-size:9.5px">BLUEPRINT_BLUEPRINTS<br><code>(page refresh only)</code></div>
+    </div>
+    <div class="node green" style="flex:1">
+      <div class="node-label green" style="font-size:10px">test_flight_requests.jsonl</div>
+      <div class="node-sub" style="font-size:9.5px">outgoing CALCULATE_TEST_FLIGHT<br><code>blueprintId → missionId</code></div>
+    </div>
+    <div class="node purple" style="flex:1">
+      <div class="node-label purple" style="font-size:10px">ship_find_data.jsonl</div>
+      <div class="node-sub" style="font-size:9.5px">SHIP_SHIPS<br>SHIP_DATA</div>
+    </div>
+  </div>
+
+  <!-- ANALYSIS JOIN -->
+  <div class="section-sep" style="margin-left:100px">
+    <div class="line"></div>
+    <div class="label">analysis join</div>
+    <div class="line"></div>
+  </div>
+
+  <!-- DROP ARROWS -->
+  <div class="row" style="margin-left:100px;gap:8px">
+    <div style="flex:1;display:flex;justify-content:center">
+      <div class="arrow-down"><div class="shaft" style="height:14px"></div><div class="head">▼</div></div>
+    </div>
+    <div style="flex:1;display:flex;justify-content:center">
+      <div class="arrow-down"><div class="shaft" style="height:14px"></div><div class="head">▼</div></div>
+    </div>
+    <div style="flex:1;display:flex;justify-content:center">
+      <div class="arrow-down"><div class="shaft" style="height:14px"></div><div class="head">▼</div></div>
+    </div>
+    <div style="flex:1;display:flex;justify-content:center">
+      <div class="arrow-down"><div class="shaft" style="height:14px"></div><div class="head">▼</div></div>
+    </div>
+  </div>
+
+  <!-- ANALYSIS NODES -->
+  <div class="row" style="margin-left:100px;gap:8px;align-items:stretch">
+    <div class="node blue" style="flex:2">
+      <div class="node-label blue" style="font-size:10px">Damage segments</div>
+      <div class="node-sub" style="font-size:9.5px">
+        TRANSIT → meteor<br>
+        LANDING → landing dmg<br>
+        keyed by <code>missionId</code>
+      </div>
+    </div>
+    <div class="node amber" style="flex:2">
+      <div class="node-label amber" style="font-size:10px">Blueprint loadout join</div>
+      <div class="node-sub" style="font-size:9.5px">
+        blueprint_data.<code>blueprintId</code><br>
+        = test_flight_requests.<code>blueprintId</code><br>
+        → <code>missionId</code> link to captures
+      </div>
+    </div>
+    <div class="node purple" style="flex:1">
+      <div class="node-label purple" style="font-size:10px">Fleet index</div>
+      <div class="node-sub" style="font-size:9.5px">ship naturalId<br>BlueprintNaturalId</div>
+    </div>
+  </div>
+
+  <!-- FINAL DROP -->
+  <div class="row" style="margin-left:100px;margin-top:8px">
+    <div style="flex:1;display:flex;justify-content:center">
+      <div class="arrow-down"><div class="shaft" style="height:16px"></div><div class="head">▼</div></div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="row" style="margin-left:100px">
+    <div class="node teal" style="flex:1">
+      <div class="node-label teal">Shielding matrix sweep</div>
+      <div class="node-sub">
+        damage[missionId] × SHIELDING_RADIATION[blueprintId]<br>
+        → isolate radiation term per route / planet
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
