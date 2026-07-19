@@ -3,9 +3,12 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 5274;
+const PORT = process.env.PORT || 5274;
 const CAPTURES_DIR = path.join(__dirname, 'captures');
-const CAPTURE_FILE = path.join(CAPTURES_DIR, 'captures.jsonl');
+const CAPTURE_FILE       = path.join(CAPTURES_DIR, 'captures.jsonl');
+const SHIP_FIND_FILE     = path.join(CAPTURES_DIR, 'ship_find_data.jsonl');
+const TEST_FLIGHT_FILE   = path.join(CAPTURES_DIR, 'test_flight_requests.jsonl');
+const BLUEPRINT_FILE     = path.join(CAPTURES_DIR, 'blueprint_data.jsonl');
 
 if (!fs.existsSync(CAPTURES_DIR)) {
   fs.mkdirSync(CAPTURES_DIR, { recursive: true });
@@ -26,9 +29,22 @@ app.post('/capture', (req, res) => {
   if (!req.body || typeof req.body.raw !== 'string') {
     return res.status(400).json({ error: 'missing or non-string raw field' });
   }
+  const captureType = req.body.captureType || 'default';
   const line = JSON.stringify({ receivedAt: new Date().toISOString(), raw: req.body.raw }) + '\n';
-  fs.appendFileSync(CAPTURE_FILE, line);
-  console.log(`[capture] ${new Date().toISOString()}  ${req.body.raw.length} chars`);
+
+  let targetFile;
+  if (captureType === 'ship_find_data') {
+    targetFile = SHIP_FIND_FILE;
+  } else if (captureType === 'test_flight_request') {
+    targetFile = TEST_FLIGHT_FILE;
+  } else if (captureType === 'blueprint_data') {
+    targetFile = BLUEPRINT_FILE;
+  } else {
+    targetFile = CAPTURE_FILE;
+  }
+
+  fs.appendFileSync(targetFile, line);
+  console.log(`[capture:${captureType}] ${new Date().toISOString()}  ${req.body.raw.length} chars`);
   res.sendStatus(200);
 });
 
